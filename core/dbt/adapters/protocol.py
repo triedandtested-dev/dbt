@@ -139,7 +139,7 @@ class AdapterProtocol(
     def release(self) -> None:
         ...
 
-    def cleanup_all(self) -> None:
+    def cleanup_connections(self) -> None:
         ...
 
     def begin(self) -> None:

@@ -9,6 +9,7 @@ from .util import write_profile_data, ProjectDefinition, built_schema, run_dbt
 # - ability to "eject" test and create a real dbt project
 
 # ** BEFORE **
+
 # ripped from `test/integration/test_simple_seed`
 # @use_profile('postgres')
 # def test_postgres_simple_seed(self):
@@ -18,6 +19,8 @@ from .util import write_profile_data, ProjectDefinition, built_schema, run_dbt
 #     self._after_seed_model_state(['seed'], exists=True)
 
 # ** AFTER **
+
+# example 1
 # an explicit example of converting an exisiting integration test to using pytest
 @pytest.mark.supported('postgres')
 def test_postgres_simple_seed(
@@ -27,7 +30,7 @@ def test_postgres_simple_seed(
     write_profile_data(profiles_root, dbt_profile_data)
     # setup project
     project = ProjectDefinition(
-        project_data={'seeds': {'config': {'quote_columns': False}}},
+        project_data={'seeds': {'quote_columns': False}},
         seeds={'data.csv': 'a,b\n1,hello\n2,goodbye'},
     )
     # write project
@@ -36,7 +39,35 @@ def test_postgres_simple_seed(
     built_schema_ctx = built_schema(unique_schema, project_root, profiles_root)
     # run tests
     with built_schema_ctx:
-        results, success = run_dbt(['seed'], profiles_root)
+        results, success = run_dbt(['seed'], str(profiles_root), strict=False)
         assert success == True
-        assert len(results['results']) == 1
+        assert len(results) == 1
 
+# example 2 TODO
+# puts most of the logic in fixture to setup and clean up a test that requires a connection
+@pytest.mark.supported('postgres')
+def test_postgres_simple_seed_again(
+    project_root, profiles_root, dbt_profile_data, unique_schema
+):
+    # write profile
+    write_profile_data(profiles_root, dbt_profile_data)
+    # setup project
+    project = ProjectDefinition(
+        project_data={'seeds': {'quote_columns': False}},
+        seeds={'data.csv': 'a,b\n1,hello\n2,goodbye'},
+    )
+    # write project
+    project.write_to(project_root)
+    # setup database
+    built_schema_ctx = built_schema(unique_schema, project_root, profiles_root)
+    # run tests
+    with built_schema_ctx:
+        results, success = run_dbt(['seed'], str(profiles_root), strict=False)
+        assert success == True
+        assert len(results) == 1
+
+# example 3 TODO
+# example where the test does not require a connection
+@pytest.mark.supported('postgres')
+def test_postgres_simple_parse():
+    pass

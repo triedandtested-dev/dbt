@@ -697,7 +697,7 @@ def built_schema(schema, project_dir, profiles_dir):
     execute(adapter, 'create schema {}'.format(schema))
     yield
     adapter = get_adapter(cfg)
-    adapter.cleanup_all()
+    adapter.cleanup_connections()
     execute(adapter, 'drop schema if exists {} cascade'.format(schema))
 
 
