@@ -8,7 +8,11 @@ import hashlib
 import itertools
 import json
 import os
+import requests
+import time
+
 from contextlib import contextmanager
+from dbt.exceptions import RegistryException
 from enum import Enum
 from typing_extensions import Protocol
 from typing import (
@@ -599,3 +603,22 @@ class MultiDict(Mapping[str, Any]):
 
     def __contains__(self, name) -> bool:
         return any((name in entry for entry in self._itersource()))
+
+
+def _exception_retry(fn):
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        max_attempts = 5
+        attempt = 0
+        while True:
+            attempt += 1
+            try:
+                return fn(*args, **kwargs)
+            except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as exc:
+                if attempt < max_attempts:
+                    time.sleep(1)
+                    continue
+                raise RegistryException(
+                    'Unable to connect to registry hub'
+                ) from exc
+    return wrapper

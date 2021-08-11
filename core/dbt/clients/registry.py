@@ -1,10 +1,7 @@
-from functools import wraps
 import requests
-from dbt.exceptions import RegistryException
-from dbt.utils import memoized
+from dbt.utils import memoized, _exception_retry as exception_retry
 from dbt.logger import GLOBAL_LOGGER as logger
 import os
-import time
 
 if os.getenv('DBT_PACKAGE_HUB_URL'):
     DEFAULT_REGISTRY_BASE_URL = os.getenv('DBT_PACKAGE_HUB_URL')
@@ -19,26 +16,7 @@ def _get_url(url, registry_base_url=None):
     return '{}{}'.format(registry_base_url, url)
 
 
-def _wrap_exceptions(fn):
-    @wraps(fn)
-    def wrapper(*args, **kwargs):
-        max_attempts = 5
-        attempt = 0
-        while True:
-            attempt += 1
-            try:
-                return fn(*args, **kwargs)
-            except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as exc:
-                if attempt < max_attempts:
-                    time.sleep(1)
-                    continue
-                raise RegistryException(
-                    'Unable to connect to registry hub'
-                ) from exc
-    return wrapper
-
-
-@_wrap_exceptions
+@exception_retry
 def _get(path, registry_base_url=None):
     url = _get_url(path, registry_base_url)
     logger.debug('Making package registry request: GET {}'.format(url))
