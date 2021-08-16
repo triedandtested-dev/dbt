@@ -61,6 +61,9 @@ class DepsTask(BaseTask):
                 package.install(self.config, renderer)
                 logger.info('  Installed from {}',
                             package.nice_version_name())
+                if package.get_version_latest() > package.get_version():
+                    logger.info('  Latest registry version: {}',
+                            package.get_version_latest())
                 if package.get_subdirectory():
                     logger.info('   and subdirectory {}\n',
                                 package.get_subdirectory())
