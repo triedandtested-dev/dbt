@@ -56,14 +56,18 @@ class DepsTask(BaseTask):
                 self.config, self.config.cli_vars
             ))
             # TODO: add logging for "Latest Version..." and "Updates available:..."
+            packages_to_upgrade = []
             for package in final_deps:
                 logger.info('Installing {}', package)
                 package.install(self.config, renderer)
                 logger.info('  Installed from {}',
                             package.nice_version_name())
                 if package.get_version_latest() > package.get_version():
+                    packages_to_upgrade.append(package.name)
                     logger.info('  Latest registry version: {}',
                             package.get_version_latest())
+                if package.get_version_latest() == package.get_version():
+                    logger.info('  Up to date!')
                 if package.get_subdirectory():
                     logger.info('   and subdirectory {}\n',
                                 package.get_subdirectory())
@@ -72,6 +76,8 @@ class DepsTask(BaseTask):
                     package_name=package.name,
                     source_type=package.source_type(),
                     version=package.get_version())
+            if packages_to_upgrade:       
+                logger.info('Updates available for: {}', packages_to_upgrade)
 
     @classmethod
     def from_args(cls, args):
