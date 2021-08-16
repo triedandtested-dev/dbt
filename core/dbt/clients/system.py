@@ -15,9 +15,8 @@ from typing import (
 )
 
 import dbt.exceptions
-
 from dbt.logger import GLOBAL_LOGGER as logger
-from dbt.utils import _exception_retry as exception_retry
+from dbt.utils import _connection_exception_retry as connection_exception_retry
 
 if sys.platform == 'win32':
     from ctypes import WinDLL, c_bool
@@ -441,7 +440,12 @@ def run_cmd(
     return out, err
 
 
-@exception_retry
+def download_with_retries(
+    url: str, path: str, timeout: Optional[Union[float, tuple]] = None
+) -> None:
+    connection_exception_retry(lambda: download(url, path, timeout), 5)
+
+
 def download(
     url: str, path: str, timeout: Optional[Union[float, tuple]] = None
 ) -> None:
