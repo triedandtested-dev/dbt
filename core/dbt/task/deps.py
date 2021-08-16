@@ -77,7 +77,7 @@ class DepsTask(BaseTask):
                     source_type=package.source_type(),
                     version=package.get_version())
             if packages_to_upgrade:       
-                logger.info('Updates available for: {}', packages_to_upgrade)
+                logger.info('Upgrades available for: {}', packages_to_upgrade)
 
     @classmethod
     def from_args(cls, args):
