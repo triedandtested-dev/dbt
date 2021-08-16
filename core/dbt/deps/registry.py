@@ -124,7 +124,6 @@ class RegistryUnpinnedPackage(
             raise DependencyException(new_msg) from e
 
         available = registry.get_available_versions(self.package)
-        # TODO: add a string object to filter for latest available?
         available_latest = max(available)
 
         installable = semver.filter_installable(
