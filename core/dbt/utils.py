@@ -607,11 +607,15 @@ class MultiDict(Mapping[str, Any]):
 
 
 def _connection_exception_retry(fn, max_attempts: int, attempt: int = 0):
+    """Attempts to run a function that makes an external call, if the call fails
+    on a connection error or timeout, it will be tried up to 5 more times.
+    """
     try:
         return fn()
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as exc:
         if attempt <= max_attempts - 1:
-            logger.debug("Retrying external call. Attempt: ", attempt, " Max attempts: " , max_attempts)
+            logger.debug('Retrying external call. Attempt: ' +
+                         f'{attempt} Max attempts: {max_attempts}')
             time.sleep(1)
             _connection_exception_retry(fn, max_attempts, attempt + 1)
         else:
