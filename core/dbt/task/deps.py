@@ -55,7 +55,7 @@ class DepsTask(BaseTask):
             renderer = DbtProjectYamlRenderer(generate_target_context(
                 self.config, self.config.cli_vars
             ))
-            # TODO: add logging for "Latest Version..." and "Updates available:..."
+            
             packages_to_upgrade = []
             for package in final_deps:
                 logger.info('Installing {}', package)
