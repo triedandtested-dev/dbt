@@ -481,3 +481,17 @@ class TestPackageSpec(unittest.TestCase):
         self.assertEqual(resolved[0].version, '0.1.3')
         self.assertEqual(resolved[1].name, 'fishtown-analytics-test/b')
         self.assertEqual(resolved[1].version, '0.2.1')
+    
+    def test_upgrade_version_logging(self):
+        # use the mock registry to have a static latest version of a dbt packages
+        # assert latest version matches latest version
+        # assert installed version matches installed version
+        # assert logging example: 'Latest hub registry version 0.4.1'
+        # assert logging example: Upgrades available for: ['dbt-labs/dbt_utils', 'calogica/dbt_expectations']
+        pass
+
+    def test_version_up_to_date_logging(self):
+        # assert latest version matches latest version
+        # assert installed version matches installed version
+        # assert logging example: 'Up to date!'
+        pass
