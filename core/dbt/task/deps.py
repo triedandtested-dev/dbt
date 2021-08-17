@@ -55,7 +55,7 @@ class DepsTask(BaseTask):
             renderer = DbtProjectYamlRenderer(generate_target_context(
                 self.config, self.config.cli_vars
             ))
-            
+
             packages_to_upgrade = []
             for package in final_deps:
                 logger.info('Installing {}', package)
@@ -65,7 +65,7 @@ class DepsTask(BaseTask):
                 if package.get_version_latest() > package.get_version():
                     packages_to_upgrade.append(package.name)
                     logger.info('  Latest hub registry version {}',
-                            package.get_version_latest())
+                                package.get_version_latest())
                 elif package.get_version_latest() == package.get_version():
                     logger.info('  Up to date!')
                 if package.get_subdirectory():
@@ -76,7 +76,7 @@ class DepsTask(BaseTask):
                     package_name=package.name,
                     source_type=package.source_type(),
                     version=package.get_version())
-            if packages_to_upgrade:       
+            if packages_to_upgrade:
                 logger.info('Upgrades available for: {}', packages_to_upgrade)
 
     @classmethod

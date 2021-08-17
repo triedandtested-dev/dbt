@@ -30,7 +30,10 @@ class RegistryPackageMixin:
 
 
 class RegistryPinnedPackage(RegistryPackageMixin, PinnedPackage):
-    def __init__(self, package: str, version: str, version_latest: str) -> None:
+    def __init__(self,
+                 package: str,
+                 version: str,
+                 version_latest: str) -> None:
         super().__init__(package)
         self.version = version
         self.version_latest = version_latest
@@ -138,4 +141,5 @@ class RegistryUnpinnedPackage(
         target = semver.resolve_to_specific_version(range_, installable)
         if not target:
             package_version_not_found(self.package, range_, installable)
-        return RegistryPinnedPackage(package=self.package, version=target, version_latest=available_latest)
+        return RegistryPinnedPackage(package=self.package, version=target,
+                                     version_latest=available_latest)
